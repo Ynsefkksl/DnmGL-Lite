@@ -96,6 +96,9 @@ namespace DnmGLLite::Vulkan {
         const auto device = VulkanContext->GetDevice();
 
         {
+            const Vulkan::Shader * shaders[] = {typed_vertex_shader, typed_fragment_shader};
+            m_dst_sets = typed_resource_manager->GetDescriptorSets(shaders);
+
             std::vector<vk::PushConstantRange> push_constants{};
 
             if (typed_vertex_shader->GetPushConstants().has_value()) {
@@ -114,11 +117,13 @@ namespace DnmGLLite::Vulkan {
                             );
             }
 
+            auto dst_set_layouts = typed_resource_manager->GetDescriptorLayouts(shaders);
+
             vk::PipelineLayoutCreateInfo create_info{};
-            create_info.setPSetLayouts(typed_resource_manager->GetDescriptorLayouts().data())
-                        .setSetLayoutCount(typed_resource_manager->GetDescriptorLayouts().size())
+            create_info.setSetLayouts(dst_set_layouts)
                         .setPushConstantRanges(push_constants)
                         ;
+
             m_pipeline_layout = device.createPipelineLayout(create_info);
         }
 
@@ -499,13 +504,24 @@ namespace DnmGLLite::Vulkan {
         const auto device = VulkanContext->GetDevice();
 
         {
+            const Vulkan::Shader * shaders[] = {typed_shader};
+            m_dst_sets = typed_resource_manager->GetDescriptorSets(shaders);
+            auto dst_set_layouts = typed_resource_manager->GetDescriptorLayouts(shaders);
+
+            vk::PushConstantRange push_constant;
+
+            if (typed_shader->GetPushConstants().has_value()) {
+                push_constant = vk::PushConstantRange{}.setStageFlags(vk::ShaderStageFlagBits::eCompute)
+                                            .setOffset(typed_shader->GetPushConstants()->offset)
+                                            .setSize(typed_shader->GetPushConstants()->size);
+            }
+
             vk::PipelineLayoutCreateInfo create_info{};
-            create_info.setPSetLayouts(typed_resource_manager->GetDescriptorLayouts().data())
-                        .setSetLayoutCount(typed_resource_manager->GetDescriptorLayouts().size())
+            create_info.setSetLayouts(dst_set_layouts)
                         .setPushConstantRanges(
-                    vk::PushConstantRange{}.setStageFlags(vk::ShaderStageFlagBits::eCompute)
-                                        .setOffset(0)
-                                        .setSize(128));
+                            push_constant
+                        )
+                        .setPushConstantRangeCount(typed_shader->GetPushConstants().has_value());
             m_pipeline_layout = device.createPipelineLayout(create_info);
         }
 

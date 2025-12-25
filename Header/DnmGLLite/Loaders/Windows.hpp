@@ -16,13 +16,13 @@ namespace DnmGLLite::Windows {
             //TODO: choose dx and vulkan api 
             shared = LoadLibrary(shared_path.data());
             if (!shared) {
-                throw DnmGLLite::Error("failed to context lib load");
+                //throw DnmGLLite::Error("failed to context lib load");
             }
 
             const auto load_func = (DnmGLLite::Context*((*)()))GetProcAddress(shared, "LoadContext");
             if (!load_func) {
                 FreeLibrary(shared);
-                throw DnmGLLite::Error("failed to context load function");
+                //throw DnmGLLite::Error("failed to context load function");
             }
             
             context = load_func();

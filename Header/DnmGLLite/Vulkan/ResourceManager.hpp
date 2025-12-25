@@ -14,7 +14,9 @@ namespace DnmGLLite::Vulkan {
 
         constexpr void BindSets(vk::CommandBuffer command_buffer, vk::PipelineBindPoint bind_point, vk::PipelineLayout pipeline_layout) noexcept;
 
+        [[nodiscard]] std::vector<vk::DescriptorSetLayout> GetDescriptorLayouts(std::span<const Vulkan::Shader *> shaders) const noexcept;
         [[nodiscard]] constexpr std::span<const vk::DescriptorSetLayout> GetDescriptorLayouts() const noexcept { return m_dst_set_layouts; }
+        [[nodiscard]] std::vector<vk::DescriptorSet> GetDescriptorSets(std::span<const Vulkan::Shader *> shaders) const noexcept;
         [[nodiscard]] constexpr std::span<const vk::DescriptorSet> GetDescriptorSets() const noexcept { return m_sets; }
     private:
         std::vector<vk::DescriptorSet> m_sets;

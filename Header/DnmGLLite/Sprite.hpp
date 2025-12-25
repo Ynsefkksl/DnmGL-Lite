@@ -48,22 +48,22 @@ namespace DnmGLLite {
     class SpriteCamera {
     public:
         // ortho
-        SpriteCamera(Float2 camera_extent, float near, float far) 
-        : m_camera_extent(camera_extent), m_near(near), m_far(far), m_perspective(false) {}
+        SpriteCamera(Float2 camera_extent, float near_, float far_) 
+        : m_camera_extent(camera_extent), m_near(near_), m_far(far_), m_perspective(false) {}
         // perspective
-        SpriteCamera(Float2 camera_extent, float fov, float near, float far) 
-        : m_camera_extent(camera_extent), m_fov(fov), m_near(near), m_far(far), m_perspective(true) {}
+        SpriteCamera(Float2 camera_extent, float fov, float near_, float far_) 
+        : m_camera_extent(camera_extent), m_fov(fov), m_near(near_), m_far(far_), m_perspective(true) {}
 
-        void SetProjection(float fov, float near, float far) {
+        void SetProjection(float fov, float near_, float far_) {
             m_fov = fov;
-            m_near = near;
-            m_far = far;
+            m_near = near_;
+            m_far = far_;
             m_perspective = true;
         }
 
-        void SetOrtho(float near, float far) {
-            m_near = near;
-            m_far = far;
+        void SetOrtho(float near_, float far_) {
+            m_near = near_;
+            m_far = far_;
             m_perspective = false;
         }
         

@@ -4,7 +4,6 @@
 #include "DnmGLLite/Vulkan/Image.hpp"
 
 namespace DnmGLLite::Vulkan {
-    //TODO: store unordered access resources data for sync
     class GraphicsPipeline final : public DnmGLLite::GraphicsPipeline {
     public:
         GraphicsPipeline(Vulkan::Context& context, const DnmGLLite::GraphicsPipelineDesc& desc) noexcept;
@@ -44,6 +43,8 @@ namespace DnmGLLite::Vulkan {
         vk::Framebuffer m_framebuffer;
         vk::Extent2D m_render_area;
 
+        std::vector<vk::DescriptorSet> m_dst_sets{};
+
         std::vector<Vulkan::Image *> m_user_color_attachments{}; 
         Vulkan::Image *m_user_depth_stencil_attachment{};
 
@@ -57,7 +58,6 @@ namespace DnmGLLite::Vulkan {
         bool m_has_stencil_attachment : 1{};
     };
 
-    //TODO: store unordered access resources data for sync
     class ComputePipeline final : public DnmGLLite::ComputePipeline  {
     public:
         ComputePipeline(Vulkan::Context& context, const DnmGLLite::ComputePipelineDesc& desc) noexcept;
@@ -69,6 +69,8 @@ namespace DnmGLLite::Vulkan {
         [[nodiscard]] auto GetBufferResourceAccessInfo() const { return m_buffer_resource_access_info; }
         [[nodiscard]] auto GetImageResourceAccessInfo() const { return m_image_resource_access_info; }
     private:
+        std::vector<vk::DescriptorSet> m_dst_sets{};
+
         ResourceAccessInfo m_buffer_resource_access_info{};
         ResourceAccessInfo m_image_resource_access_info{};
         

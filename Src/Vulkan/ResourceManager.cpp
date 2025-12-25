@@ -208,4 +208,40 @@ namespace DnmGLLite::Vulkan {
             VulkanContext->GetDevice().updateDescriptorSets(writes, {});
         }
     }
+
+    std::vector<vk::DescriptorSetLayout> ResourceManager::GetDescriptorLayouts(std::span<const Vulkan::Shader *> shaders) const noexcept {
+        if (m_dst_set_layouts.size() == 0) {
+            return {};
+        }
+        if (m_shaders.size() == 1) {
+            return m_dst_set_layouts;
+        }
+
+        std::vector<vk::DescriptorSetLayout> set_layouts;
+        set_layouts.reserve(4);
+        for (const auto* shader : shaders) {
+            for (const auto& [i, _] : shader->GetDescriptorSets()) {
+                set_layouts.push_back(m_dst_set_layouts[i]);
+            }
+        }
+        return std::move(set_layouts);
+    }
+
+    std::vector<vk::DescriptorSet> ResourceManager::GetDescriptorSets(std::span<const Vulkan::Shader *> shaders) const noexcept {
+        if (m_sets.size() == 0) {
+            return {};
+        }
+        if (m_shaders.size() == 1) {
+            return m_sets;
+        }
+
+        std::vector<vk::DescriptorSet> sets;
+        sets.reserve(4);
+        for (const auto* shader : shaders) {
+            for (const auto& [i, _] : shader->GetDescriptorSets()) {
+                sets.push_back(m_sets[i]);
+            }
+        }
+        return std::move(sets);
+    }
 } // namespace DnmGLLite::Vulkan

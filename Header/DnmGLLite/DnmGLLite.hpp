@@ -18,7 +18,6 @@
 #include <unordered_set>
 #include <source_location>
 
-//TODO: make good log manager and error system
 namespace DnmGLLite {
     class Context;
     class CommandBuffer;

@@ -105,11 +105,15 @@ namespace DnmGLLite::Vulkan {
             std::vector<SpvReflectBlockVariable*> pushConstants(count);
             reflect.EnumeratePushConstantBlocks(&count, pushConstants.data());
 
-            if (count != 0)
+            if (count != 0) {
                 m_push_constant = PushConstant {
                 pushConstants[0]->size,
                 pushConstants[0]->offset,
                 };
+                DnmGLLiteAssert(
+                    m_push_constant->offset + m_push_constant->size < 128, 
+                    "push constant offset + size should be small 128 byte")
+            }
         }
     }
 }
