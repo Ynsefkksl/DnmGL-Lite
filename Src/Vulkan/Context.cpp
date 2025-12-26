@@ -308,29 +308,29 @@ namespace DnmGLLite::Vulkan {
             return;
         }
 
-        m_device.waitIdle();
+        if (m_device) m_device.waitIdle();
 
-        delete placeholder_image;
-        delete placeholder_sampler;
-        delete m_command_buffer;
+        if (placeholder_image) delete placeholder_image;
+        if (placeholder_sampler) delete placeholder_sampler;
+        if (m_command_buffer) delete m_command_buffer;
 
         DeleteVulkanObjects();
 
-        vmaDestroyAllocator(m_vma_allocator);
+        if (m_vma_allocator) vmaDestroyAllocator(m_vma_allocator);
 
         for (const auto image_view : m_swapchain_image_views) {
             m_device.destroy(image_view);    
         }
 
-        m_device.destroy(m_descriptor_pool);
-        m_device.destroy(m_command_pool);
-        m_device.destroy(m_swapchain);
-        m_device.destroy(m_fence);
-        m_device.destroy(m_acquire_next_image_semaphore);
-        m_device.destroy(m_render_finished_semaphore);
-        m_device.destroy();
+        if (m_descriptor_pool) m_device.destroy(m_descriptor_pool);
+        if (m_command_pool) m_device.destroy(m_command_pool);
+        if (m_swapchain) m_device.destroy(m_swapchain);
+        if (m_fence) m_device.destroy(m_fence);
+        if (m_acquire_next_image_semaphore) m_device.destroy(m_acquire_next_image_semaphore);
+        if (m_render_finished_semaphore) m_device.destroy(m_render_finished_semaphore);
+        if (m_device) m_device.destroy();
         
-        m_instance.destroy(m_surface);
+        if (m_surface) m_instance.destroy(m_surface);
         if constexpr (_debug) {
             m_instance.destroy(m_debug_messanger, {}, dispatcher);
         }
