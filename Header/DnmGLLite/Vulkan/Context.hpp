@@ -246,6 +246,8 @@ namespace DnmGLLite::Vulkan {
         [[nodiscard]] auto* GetVmaAllocator() const { return m_vma_allocator; }
         [[nodiscard]] auto GetSwapchainProperties() const { return m_swapchain_properties; }
         [[nodiscard]] auto GetImageIndex() const { return m_image_index; }
+        [[nodiscard]] auto GetEmptySetLayout() const { return m_empty_set_layout; }
+        [[nodiscard]] auto GetEmptySet() const { return m_empty_set; }
         [[nodiscard]] const auto& GetDispatcher() const { return dispatcher; }
     
         void ReCreateSwapchain(Uint2 extent, bool Vsync) { CreateSwapchain(extent, Vsync); }
@@ -324,6 +326,8 @@ namespace DnmGLLite::Vulkan {
         std::vector<vk::ImageView> m_swapchain_image_views{};
         VmaAllocator m_vma_allocator = VK_NULL_HANDLE;
         vk::DescriptorPool m_descriptor_pool;
+        vk::DescriptorSetLayout m_empty_set_layout;
+        vk::DescriptorSet m_empty_set;
         ContextState context_state = ContextState::eNone;
     };
 

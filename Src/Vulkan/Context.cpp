@@ -309,6 +309,7 @@ namespace DnmGLLite::Vulkan {
 
         if (m_device) m_device.waitIdle();
 
+        if (m_empty_set_layout) m_device.destroy(m_empty_set_layout);
         if (placeholder_image) delete placeholder_image;
         if (placeholder_sampler) delete placeholder_sampler;
         if (m_command_buffer) delete m_command_buffer;
@@ -832,6 +833,14 @@ namespace DnmGLLite::Vulkan {
     }
 
     void Context::CreatePlaceholders() {
+        m_empty_set_layout = m_device.createDescriptorSetLayout(vk::DescriptorSetLayoutCreateInfo{}.setBindingCount(0));
+        m_empty_set 
+            = m_device.allocateDescriptorSets(
+                vk::DescriptorSetAllocateInfo{}
+                    .setSetLayouts(m_empty_set_layout)
+                    .setDescriptorSetCount(1)
+                    .setDescriptorPool(m_descriptor_pool))[0];
+
         placeholder_image = new DnmGLLite::Vulkan::Image(*this, {
             .extent = {1, 1, 1},
             .format = DnmGLLite::Format::eRGBA8Norm,

@@ -21,6 +21,8 @@ namespace DnmGLLite::Vulkan {
     private:
         std::vector<vk::DescriptorSet> m_sets;
         std::vector<vk::DescriptorSetLayout> m_dst_set_layouts;
+
+        vk::DescriptorSet m_placeholder_set;
     };
 
     inline ResourceManager::~ResourceManager() {

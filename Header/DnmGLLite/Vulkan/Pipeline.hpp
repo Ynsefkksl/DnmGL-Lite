@@ -27,6 +27,8 @@ namespace DnmGLLite::Vulkan {
         [[nodiscard]] auto GetFramebuffer() const { 
             return m_desc.presenting ? m_swapchain_framebuffers[VulkanContext->GetImageIndex()] : m_framebuffer;
         }
+        
+        [[nodiscard]] auto GetDstSets() const { return std::span(m_dst_sets); }
         [[nodiscard]] auto GetBufferResourceAccessInfo() const { return m_buffer_resource_access_info; }
         [[nodiscard]] auto GetImageResourceAccessInfo() const { return m_image_resource_access_info; }
     private:
@@ -65,6 +67,7 @@ namespace DnmGLLite::Vulkan {
         
         [[nodiscard]] auto GetPipeline() const { return m_pipeline; }
         [[nodiscard]] auto GetPipelineLayout() const { return m_pipeline_layout; }
+        [[nodiscard]] auto GetDstSets() const { return std::span(m_dst_sets); }
 
         [[nodiscard]] auto GetBufferResourceAccessInfo() const { return m_buffer_resource_access_info; }
         [[nodiscard]] auto GetImageResourceAccessInfo() const { return m_image_resource_access_info; }

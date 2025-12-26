@@ -3,6 +3,7 @@
 #include "DnmGLLite/Vulkan/Image.hpp"
 #include "DnmGLLite/Vulkan/Buffer.hpp"
 #include "DnmGLLite/Vulkan/Sampler.hpp"
+#include <set>
 
 namespace DnmGLLite::Vulkan {
     ResourceManager::ResourceManager(DnmGLLite::Vulkan::Context& ctx, std::span<const DnmGLLite::Shader*> shaders)
@@ -197,11 +198,11 @@ namespace DnmGLLite::Vulkan {
         }
         if (!updates.empty()) {
             std::vector<vk::WriteDescriptorSet> writes(updates.size());
-            std::vector<vk::DescriptorImageInfo> buffer_infos(updates.size());
+            std::vector<vk::DescriptorImageInfo> image_infos(updates.size());
 
             uint32_t i{};
             for (const auto& res : updates) {
-                VulkanContext->ProcessResource(res, buffer_infos[i], writes[i]);
+                VulkanContext->ProcessResource(res, image_infos[i], writes[i]);
                 ++i;
             }
 
@@ -217,13 +218,21 @@ namespace DnmGLLite::Vulkan {
             return m_dst_set_layouts;
         }
 
-        std::vector<vk::DescriptorSetLayout> set_layouts;
-        set_layouts.reserve(4);
+        std::set<uint32_t> set_layouts_indices;
+
         for (const auto* shader : shaders) {
             for (const auto& [i, _] : shader->GetDescriptorSets()) {
-                set_layouts.push_back(m_dst_set_layouts[i]);
+                set_layouts_indices.emplace(i);
             }
         }
+
+        std::vector<vk::DescriptorSetLayout> set_layouts(std::ranges::max(set_layouts_indices) + 1);
+        std::ranges::fill(set_layouts, VulkanContext->GetEmptySetLayout());
+
+        for (auto i : set_layouts_indices) {
+            set_layouts[i] = m_dst_set_layouts[i];
+        }
+
         return std::move(set_layouts);
     }
 
@@ -231,17 +240,22 @@ namespace DnmGLLite::Vulkan {
         if (m_sets.size() == 0) {
             return {};
         }
-        if (m_shaders.size() == 1) {
-            return m_sets;
-        }
 
-        std::vector<vk::DescriptorSet> sets;
-        sets.reserve(4);
+        std::set<uint32_t> set_indices;
+
         for (const auto* shader : shaders) {
             for (const auto& [i, _] : shader->GetDescriptorSets()) {
-                sets.push_back(m_sets[i]);
+                set_indices.emplace(i);
             }
         }
+
+        std::vector<vk::DescriptorSet> sets(std::ranges::max(set_indices) + 1);
+        std::ranges::fill(sets, VulkanContext->GetEmptySet());
+
+        for (auto i : set_indices) {
+            sets[i] = m_sets[i];
+        }
+
         return std::move(sets);
     }
 } // namespace DnmGLLite::Vulkan

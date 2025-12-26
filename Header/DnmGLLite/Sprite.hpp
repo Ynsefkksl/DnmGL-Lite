@@ -443,7 +443,7 @@ namespace DnmGLLite {
 
             command_buffer->Draw(4, m_sprite_count);
             
-            command_buffer->EndRendering(m_graphics_pipeline.get());
+                command_buffer->EndRendering(m_graphics_pipeline.get());
         }
     }
 }

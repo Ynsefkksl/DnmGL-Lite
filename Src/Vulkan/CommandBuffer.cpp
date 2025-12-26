@@ -2,7 +2,6 @@
 #include "DnmGLLite/Vulkan/Pipeline.hpp"
 #include "DnmGLLite/Vulkan/Buffer.hpp"
 #include "DnmGLLite/Vulkan/Image.hpp"
-#include "DnmGLLite/Vulkan/ResourceManager.hpp"
 
 namespace DnmGLLite::Vulkan {
     CommandBuffer::CommandBuffer(Vulkan::Context& context)
@@ -17,7 +16,6 @@ namespace DnmGLLite::Vulkan {
     
     void CommandBuffer::BindPipeline(const DnmGLLite::ComputePipeline* pipeline) {
         const auto* typed_pipeline = static_cast<const Vulkan::ComputePipeline *>(pipeline);
-        const auto* typed_resource_manager = static_cast<const Vulkan::ResourceManager *>(pipeline->GetDesc().resource_manager);
 
         ProcressDeferTranslateImageLayout();
 
@@ -25,7 +23,7 @@ namespace DnmGLLite::Vulkan {
                         vk::PipelineBindPoint::eCompute, 
                         typed_pipeline->GetPipelineLayout(),
                         0,
-                        typed_resource_manager->GetDescriptorSets(),
+                        typed_pipeline->GetDstSets(),
                         {});
 
         command_buffer.bindPipeline(
@@ -563,7 +561,6 @@ namespace DnmGLLite::Vulkan {
             std::span<const ColorFloat> color_clear_values, 
             std::optional<DepthStencilClearValue> depth_stencil_clear_value) {
         const auto* typed_pipeline = static_cast<const Vulkan::GraphicsPipeline *>(pipeline);
-        const auto* typed_resource_manager = static_cast<const Vulkan::ResourceManager*>(pipeline->GetDesc().resource_manager);
         const auto renderpass = typed_pipeline->GetRenderpass();
         const auto framebuffer = typed_pipeline->GetFramebuffer();
 
@@ -577,7 +574,7 @@ namespace DnmGLLite::Vulkan {
                         vk::PipelineBindPoint::eGraphics, 
                         typed_pipeline->GetPipelineLayout(),
                         0,
-                        typed_resource_manager->GetDescriptorSets(),
+                        typed_pipeline->GetDstSets(),
                         {});
 
         command_buffer.bindPipeline(
