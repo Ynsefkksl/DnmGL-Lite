@@ -572,7 +572,7 @@ namespace DnmGLLite {
             std::string_view message, 
             MessageType error,
             std::string_view source = std::source_location::current().function_name()) {
-            callback_func(message, error, source);
+            if (callback_func) callback_func(message, error, source);
         };
     protected:
         DnmGLLite::Image* placeholder_image;

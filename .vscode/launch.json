@@ -6,10 +6,10 @@
     "configurations": [
 
         {
-            "name": "(Windows) Launch (debug)",
+            "name": "Sprite Demo (debug)",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/game.exe",
+            "program": "${workspaceFolder}/build-debug/Examples_Executables/Sprite.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -18,10 +18,10 @@
             "preLaunchTask": "Build (debug)"
         },
         {
-            "name": "(Windows) Launch (release)",
+            "name": "Sprite Demo (release)",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/game.exe",
+            "program": "${workspaceFolder}/build-release/Examples_Executables/Sprite.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
