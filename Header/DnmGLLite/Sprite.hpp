@@ -1,8 +1,6 @@
 #pragma once
 
 #include "DnmGLLite.hpp"
-#include <glm/glm.hpp>
-#include <glm/ext/matrix_clip_space.hpp>
 
 namespace DnmGLLite {
     struct alignas(16) SpriteCameraData {
