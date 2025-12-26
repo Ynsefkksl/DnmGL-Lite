@@ -175,6 +175,10 @@ int main(int argc, char** args) {
             .init_capacity = 1024 * 512,
         });
 
+        DnmGLLite::SpriteCamera camera({float(WindowExtent.x)/WindowExtent.y, 1}, 0.1, 10);
+        camera.CalculateProjMtx();
+        sprite_manager.SetCamera(&camera);
+
         global_sprite_manager = &sprite_manager;
 
         {

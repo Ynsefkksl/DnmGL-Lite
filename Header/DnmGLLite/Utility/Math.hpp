@@ -164,21 +164,25 @@ namespace DnmGLLite {
     //colomn major
     struct Mat4x4 {
         Mat4x4() = default;
-        Mat4x4(float a) : v({a, a, a, a}) {}
-        Mat4x4(const std::array<Float4, 4>& a) : v(a) {}
+        Mat4x4(float s) : column({
+            Float4(s, 0, 0, 0), 
+            Float4(0, s, 0, 0), 
+            Float4(0, 0, s, 0), 
+            Float4(0, 0, 0, s)}) {}
+        Mat4x4(const std::array<Float4, 4>& a) : column(a) {}
 
-        constexpr Mat4x4 operator+(Mat4x4 o) const { return std::array{v[0] + o.v[0], v[1] + o.v[1], v[2] + o.v[2], v[3] + o.v[3]}; }
-        constexpr Mat4x4 operator-(Mat4x4 o) const { return std::array{v[0] - o.v[0], v[1] - o.v[1], v[2] - o.v[2], v[3] - o.v[3]}; }
+        constexpr Mat4x4 operator+(Mat4x4 o) const { return std::array{column[0] + o.column[0], column[1] + o.column[1], column[2] + o.column[2], column[3] + o.column[3]}; }
+        constexpr Mat4x4 operator-(Mat4x4 o) const { return std::array{column[0] - o.column[0], column[1] - o.column[1], column[2] - o.column[2], column[3] - o.column[3]}; }
         constexpr Mat4x4 operator*(Mat4x4 o) const;
         constexpr Mat4x4 operator*(Float4 o) const;
 
-        constexpr Mat4x4& operator+=(Mat4x4 o){ v[0]+=o.v[0]; v[1]+=o.v[1]; v[2]+=o.v[2]; v[3]+=o.v[3]; return *this; }
-        constexpr Mat4x4& operator-=(Mat4x4 o){ v[0]-=o.v[0]; v[1]-=o.v[1]; v[2]-=o.v[2]; v[3]-=o.v[3]; return *this; }
+        constexpr Mat4x4& operator+=(Mat4x4 o){ column[0]+=o.column[0]; column[1]+=o.column[1]; column[2]+=o.column[2]; column[3]+=o.column[3]; return *this; }
+        constexpr Mat4x4& operator-=(Mat4x4 o){ column[0]-=o.column[0]; column[1]-=o.column[1]; column[2]-=o.column[2]; column[3]-=o.column[3]; return *this; }
 
         Float4& operator[](uint32_t i) {
-            return v[i];
+            return column[i];
         }
-        std::array<Float4, 4> v{};
+        std::array<Float4, 4> column{};
     };
 
     constexpr Mat4x4 Mat4x4::operator*(Mat4x4 other) const { 
@@ -186,17 +190,17 @@ namespace DnmGLLite {
         for (const auto c : Counter(4))
             for (const auto r : Counter(4))
                 out[c][r] =
-                    v[0][r] * other[c][0] +
-                    v[1][r] * other[c][1] +
-                    v[2][r] * other[c][2] +
-                    v[3][r] * other[c][3];
+                    column[0][r] * other[c][0] +
+                    column[1][r] * other[c][1] +
+                    column[2][r] * other[c][2] +
+                    column[3][r] * other[c][3];
         return out;
     }
 
     constexpr Mat4x4 Mat4x4::operator*(Float4 other) const { 
         Mat4x4 out;
         for (const auto i : Counter(4)) {
-            out[i] = DotProduct(v[i], other);
+            out[i] = DotProduct(column[i], other);
         }
         return out;
     }
@@ -217,29 +221,29 @@ namespace DnmGLLite {
     }
 
     // https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
-    // orthoRH_NO
-    constexpr Mat4x4 Ortho(float right, float left, float bottom, float top, float zNear, float zFar) {
+    // orthoLH_ZO
+    constexpr Mat4x4 Ortho(float left, float right, float bottom, float top, float zNear, float zFar) {
         Mat4x4 out(1);
-        out[0][0] = 2.f / right - left;
-        out[1][1] = 2.f / top - bottom;
-        out[2][2] = 2.f / (zFar - zNear);
-        out[3][0] = -(right + left) / (right - left);
-        out[3][1] = -(top + bottom) / (top - bottom);
-        out[3][2] = - (zFar + zNear) / (zFar - zNear);
+        out[0][0] = 2.f / (right - left);
+        out[1][1] = 2.f / (top - bottom);
+        out[2][2] = 1.f / (zFar - zNear);
+        out[3][0] = - (right + left) / (right - left);
+        out[3][1] = - (top + bottom) / (top - bottom);
+        out[3][2] = - zNear / (zFar - zNear);
         return out;
     }
 
     // https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
-    // perspectiveRH_NO
+    // perspectiveLH_ZO
     constexpr Mat4x4 Perspective(float fovy, float aspect, float zNear, float zFar) {
 		const float tanHalfFovy = tan(fovy / 2.f);
 
 		Mat4x4 Result{};
-		Result[0][0] = static_cast<float>(1) / (aspect * tanHalfFovy);
-		Result[1][1] = static_cast<float>(1) / (tanHalfFovy);
-		Result[2][2] = - (zFar + zNear) / (zFar - zNear);
-		Result[2][3] = - static_cast<float>(1);
-		Result[3][2] = - (static_cast<float>(2) * zFar * zNear) / (zFar - zNear);
+        Result[0][0] = 1.f / (aspect * tanHalfFovy);
+		Result[1][1] = 1.f / (tanHalfFovy);
+		Result[2][2] = zFar / (zFar - zNear);
+		Result[2][3] = 1.f;
+		Result[3][2] = -(zFar * zNear) / (zFar - zNear);
 		return Result;
     }
 }

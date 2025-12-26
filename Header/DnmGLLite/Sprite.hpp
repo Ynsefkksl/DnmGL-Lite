@@ -1,6 +1,8 @@
 #pragma once
 
 #include "DnmGLLite.hpp"
+#include <glm/glm.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
 
 namespace DnmGLLite {
     struct alignas(16) SpriteCameraData {
@@ -77,7 +79,7 @@ namespace DnmGLLite {
                 m_camera_data.proj_mtx = Perspective(m_fov, m_camera_extent.x / m_camera_extent.y, m_near, m_far);
             }
             else {
-                m_camera_data.proj_mtx = Ortho(m_camera_extent.x/2.f, -m_camera_extent.x/2.f, -m_camera_extent.y/2.f, m_camera_extent.y/2.f, m_near, m_far);
+                m_camera_data.proj_mtx = Ortho(-m_camera_extent.x, m_camera_extent.x, -m_camera_extent.y, m_camera_extent.y, 0.01f, 1.f);
             }
             return m_camera_data;
         }
@@ -188,7 +190,7 @@ namespace DnmGLLite {
         DnmGLLite::Shader::Ptr m_fragment_shader{};
 
         DnmGLLite::Buffer::Ptr m_sprite_buffer{};
-        SpriteCamera* m_camera_ptr;
+        SpriteCamera* m_camera_ptr{};
         uint32_t m_sprite_count{};
     };
 
@@ -426,7 +428,7 @@ namespace DnmGLLite {
     }
 
     inline void SpriteManager::RenderSprites(DnmGLLite::CommandBuffer* command_buffer, const DnmGLLite::ColorFloat &clear_color) noexcept {
-        DnmGLLiteAssert(m_camera_ptr, "m_camera_ptr cannot be null");
+        DnmGLLiteAssert(m_camera_ptr , "m_camera_ptr cannot be null");
 
         if (m_sprite_count) {
             command_buffer->BeginRendering(

@@ -20,7 +20,6 @@
 #include <algorithm>
 #include <cstdint>
 #include <print>
-#include <exception>
 #include <string>
 #include <vector>
 

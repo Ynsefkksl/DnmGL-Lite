@@ -53,8 +53,10 @@ namespace DnmGLLite::Vulkan {
     : DnmGLLite::Image(ctx, desc) {
         DnmGLLiteAssert(m_desc.mipmap_levels != 0, "mipmap level cannot be 0")
         DnmGLLiteAssert(m_desc.extent.x != 0 || m_desc.extent.y != 0 || m_desc.extent.z != 0, "extent values cannot be 0")
-        DnmGLLiteAssert(m_desc.type == ImageType::e1D && (m_desc.extent.y == 1 && m_desc.extent.z == 1), 
-                            "type if ImageType::e1D, x and z extent is must be 1")
+        if (m_desc.type == ImageType::e1D) {
+            DnmGLLiteAssert((m_desc.extent.y == 1 && m_desc.extent.z == 1), 
+                                "type if ImageType::e1D, x and z extent is must be 1 (1D arrays not supported)")
+        }
 
         {
             switch (m_desc.format) {

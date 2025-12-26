@@ -32,6 +32,7 @@ StorageBuffer(0, 0) restrict readonly spriteBuffer {
 
 PushConstant ps {
     mat4 proj_mtx;
+    vec4 camera_pos;
 };
 
 layout(location = 0) out outBlock {
@@ -74,7 +75,7 @@ void main() {
         sprite_data.sprite_coords[uv[gl_VertexIndex].x * 2],
         sprite_data.sprite_coords[uv[gl_VertexIndex].y * 2 + 1]
         );
-    gl_Position = proj_mtx * vec4(out_.vert_pos, 0, 1);
+    gl_Position = proj_mtx * vec4(out_.vert_pos, 0.5, 1);
 }
 
 /*
