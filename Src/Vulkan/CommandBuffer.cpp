@@ -602,14 +602,13 @@ namespace DnmGLLite::Vulkan {
                     .setRenderArea({{}, typed_pipeline->GetRenderArea()})
                     ;
 
-        command_buffer.beginRenderPass2KHR(
+        command_buffer.beginRenderPass(
             begin_desc, 
-            vk::SubpassBeginInfo{vk::SubpassContents::eInline}, 
-            VulkanContext->GetDispatcher());
+            vk::SubpassContents::eInline);
     }
 
     void CommandBuffer::EndRendering(const DnmGLLite::GraphicsPipeline *pipeline) {
-        command_buffer.endRenderPass2KHR(vk::SubpassEndInfo{}, VulkanContext->GetDispatcher());
+        command_buffer.endRenderPass();
 
         // translate user image's layouts
         {

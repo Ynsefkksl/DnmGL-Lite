@@ -31,7 +31,6 @@ extern "C" __declspec(dllexport) DnmGLLite::Context* LoadContext() {
 
 namespace DnmGLLite::Vulkan {
     static const std::vector<const char*> required_extensions {
-        VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME,
         VK_KHR_SWAPCHAIN_EXTENSION_NAME
     };
 
@@ -417,9 +416,6 @@ namespace DnmGLLite::Vulkan {
         m_instance = vk::createInstance(instance_create_info);
     
         {
-            DISPATCH_VK_FUNC(vkCreateRenderPass2KHR);
-            DISPATCH_VK_FUNC(vkCmdBeginRenderPass2KHR);
-            DISPATCH_VK_FUNC(vkCmdEndRenderPass2KHR);
             DISPATCH_VK_FUNC(vkCreateDebugUtilsMessengerEXT);
             DISPATCH_VK_FUNC(vkDestroyDebugUtilsMessengerEXT);
             DISPATCH_VK_FUNC(vkCmdPipelineBarrier2KHR);

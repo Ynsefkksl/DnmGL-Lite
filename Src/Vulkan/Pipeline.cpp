@@ -245,9 +245,9 @@ namespace DnmGLLite::Vulkan {
     void GraphicsPipeline::CreateRenderpass() noexcept {
         const auto device = VulkanContext->GetDevice();
 
-        std::vector<vk::AttachmentDescription2> attachment_descs{};
-        std::vector<vk::AttachmentReference2> color_references{};
-        std::vector<vk::AttachmentReference2> resolve_references{};
+        std::vector<vk::AttachmentDescription> attachment_descs{};
+        std::vector<vk::AttachmentReference> color_references{};
+        std::vector<vk::AttachmentReference> resolve_references{};
 
         for (const auto i : Counter(GetColorAttachmentCount())) {
             attachment_descs.emplace_back(
@@ -265,15 +265,13 @@ namespace DnmGLLite::Vulkan {
             if (HasMsaa()) {
                 resolve_references.emplace_back(
                     i,
-                    vk::ImageLayout::eColorAttachmentOptimal,
-                    vk::ImageAspectFlagBits::eColor
+                    vk::ImageLayout::eColorAttachmentOptimal
                 );
             }
             else {
                 color_references.emplace_back(
                     i,
-                    vk::ImageLayout::eColorAttachmentOptimal,
-                    vk::ImageAspectFlagBits::eColor
+                    vk::ImageLayout::eColorAttachmentOptimal
                 );
             }
         }
@@ -294,12 +292,11 @@ namespace DnmGLLite::Vulkan {
 
                 color_references.emplace_back(
                     GetColorAttachmentCount() + i,
-                    vk::ImageLayout::eColorAttachmentOptimal,
-                    vk::ImageAspectFlagBits::eColor
+                    vk::ImageLayout::eColorAttachmentOptimal
                 );
             }
 
-        vk::AttachmentReference2 depth_stencil_reference{};
+        vk::AttachmentReference depth_stencil_reference{};
         depth_stencil_reference.setAttachment(color_references.size() * (HasMsaa() + 1))
                                 .setLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal)
                                 ;
@@ -316,8 +313,6 @@ namespace DnmGLLite::Vulkan {
                 vk::ImageLayout::eUndefined,
                 vk::ImageLayout::eDepthStencilAttachmentOptimal
             );
-
-            depth_stencil_reference.setAspectMask(vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil);
         }
         else if (m_has_depth_attachment) {
             attachment_descs.emplace_back(
@@ -331,8 +326,6 @@ namespace DnmGLLite::Vulkan {
                 vk::ImageLayout::eUndefined,
                 vk::ImageLayout::eDepthStencilAttachmentOptimal
             );
-
-            depth_stencil_reference.setAspectMask(vk::ImageAspectFlagBits::eDepth);
         }
         else if (m_has_stencil_attachment) {
             attachment_descs.emplace_back(
@@ -346,11 +339,9 @@ namespace DnmGLLite::Vulkan {
                 vk::ImageLayout::eUndefined,
                 vk::ImageLayout::eDepthStencilAttachmentOptimal
             );
-
-            depth_stencil_reference.setAspectMask(vk::ImageAspectFlagBits::eStencil);
         }
 
-        vk::SubpassDescription2 subpass_desc{};
+        vk::SubpassDescription subpass_desc{};
         subpass_desc.setPDepthStencilAttachment(
                         (m_has_depth_attachment || m_has_stencil_attachment) 
                         ? &depth_stencil_reference : nullptr)
@@ -358,7 +349,7 @@ namespace DnmGLLite::Vulkan {
                     .setColorAttachments(color_references)
                     ;
 
-        vk::SubpassDependency2 subpass_dependency{};
+        vk::SubpassDependency subpass_dependency{};
         subpass_dependency.setSrcStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput)
                             .setDstStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput)
                             .setSrcAccessMask({})
@@ -374,12 +365,12 @@ namespace DnmGLLite::Vulkan {
             subpass_dependency.srcStageMask |= vk::PipelineStageFlagBits::eEarlyFragmentTests;
         }
 
-        vk::RenderPassCreateInfo2 create_info{};
+        vk::RenderPassCreateInfo create_info{};
         create_info.setSubpasses({subpass_desc})
                     .setAttachments({attachment_descs})
                     .setDependencies({subpass_dependency});
 
-        m_renderpass = device.createRenderPass2KHR(create_info, nullptr, VulkanContext->GetDispatcher());
+        m_renderpass = device.createRenderPass(create_info, nullptr);
     }
 
     void GraphicsPipeline::SetAttachments(

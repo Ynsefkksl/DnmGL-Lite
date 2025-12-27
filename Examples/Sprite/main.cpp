@@ -130,7 +130,7 @@ int main(int argc, char** args) {
     }
 
     try {
-        DnmGLLite::Windows::ContextLoader ctx_loader("../Vulkan/DnmGLLiteRHI_Vulkan.dll");
+        DnmGLLite::Windows::ContextLoader ctx_loader("../Vulkan/DnmGLLite_Vulkan.dll");
         auto* context = ctx_loader.GetContext();
 
         context->Init({

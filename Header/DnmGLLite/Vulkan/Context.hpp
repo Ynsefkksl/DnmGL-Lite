@@ -287,9 +287,6 @@ namespace DnmGLLite::Vulkan {
 
         struct Dispatcher {
             constexpr uint32_t getVkHeaderVersion() const { return VK_HEADER_VERSION; }
-            DECLARE_VK_FUNC(vkCreateRenderPass2KHR);
-            DECLARE_VK_FUNC(vkCmdBeginRenderPass2KHR);
-            DECLARE_VK_FUNC(vkCmdEndRenderPass2KHR);
             DECLARE_VK_FUNC(vkCreateDebugUtilsMessengerEXT);
             DECLARE_VK_FUNC(vkDestroyDebugUtilsMessengerEXT);
             DECLARE_VK_FUNC(vkCmdPipelineBarrier2KHR);
