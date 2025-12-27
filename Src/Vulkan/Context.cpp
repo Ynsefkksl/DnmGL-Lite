@@ -694,9 +694,18 @@ namespace DnmGLLite::Vulkan {
     }
 
     void Context::Render(const std::function<bool(DnmGLLite::CommandBuffer*)>& func) {
+        {
+            const auto result 
+                = m_device.waitForFences({m_fence}, vk::True, 1'000'000'000);
+        
+            if (result == vk::Result::eTimeout) {
+                std::println("timeout");
+            }
+            m_device.resetFences({m_fence});
+        }
+
         //get the next image
         {
-            m_queue.waitIdle();
             const auto result 
                 = m_device.acquireNextImageKHR(m_swapchain, 1'000'000'000, m_acquire_next_image_semaphore, nullptr);
 
@@ -720,14 +729,6 @@ namespace DnmGLLite::Vulkan {
         DeleteVulkanObjects();
 
         {
-            const auto result 
-                = m_device.waitForFences({m_fence}, vk::True, 1'000'000'000);
-        
-            if (result == vk::Result::eTimeout) {
-                std::println("timeout");
-            }
-            m_device.resetFences({m_fence});
-    
             m_device.resetCommandPool(m_command_pool);
             m_command_buffer->command_buffer.begin({ vk::CommandBufferUsageFlagBits::eOneTimeSubmit });
             context_state = ContextState::eCommandBufferRecording;
